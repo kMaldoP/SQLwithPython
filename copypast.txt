@@ -1,0 +1,1 @@
+cat workshop1.sql | docker exec -i pg_container psql
