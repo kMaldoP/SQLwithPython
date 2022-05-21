@@ -1,6 +1,4 @@
 
---Hello Sir, I wanted to submit this to you before the deadline even though it is incomplete, yet im having some trouble with the newly downloaded database of mine. I went to download the updated file for the course and I am not able to see the northwind database to finish the rest of the assignment. As such, I have tried to answer some of the questions based on what i would think would be the logical answer. I fear I may need you help getting this sorted and will reach out to you during normal business hours for some help. When this gets settled I can happily resubmit. cheers!
-
 -- Part 4: Mutations
 
 -- Management has decided it would like to designate employees as experts of 
@@ -30,6 +28,7 @@ CREATE TABLE employees_categories (
 -- primary key column of employees.
 ALTER TABLE employees_categories
 FOREIGN KEY --(Whatever the primary key of employees is)
+
 
 -- 4.3: Alter table
 -- Make the category_id column of employees_categories reference the 

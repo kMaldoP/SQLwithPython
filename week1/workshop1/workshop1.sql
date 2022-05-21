@@ -46,13 +46,16 @@ CREATE TABLE categories (
 
 CREATE TABLE customers(
     id SERIAL,
-    customer_id INT,
+    name TEXT NOT NULL,
+    PRIMARY KEY(id)
+);
+CREATE TABLE suppliers(
+    id SERIAL,
     name TEXT NOT NULL,
     PRIMARY KEY(id)
 );
 CREATE TABLE employees(
     id SERIAL,
-    employees_id INT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     PRIMARY KEY(id)
@@ -60,9 +63,8 @@ CREATE TABLE employees(
 CREATE TABLE orders(
     id SERIAL,
     order_date DATE,
-    order_id INT,
     employee_id INT,
-    customer_id INT,
+    customer_id INT NOT NULL,
     PRIMARY KEY(id)
 );
 CREATE TABLE orders_products(
@@ -74,37 +76,37 @@ CREATE TABLE orders_products(
 );
 CREATE TABLE territories(
     id SERIAL,
-    territory_description TEXT NOT NULL,
-    territory_id INT NOT NULL,
+    description TEXT NOT NULL,
     PRIMARY KEY(id)
 );
 CREATE TABLE employees_territories(
     employee_id INT NOT NULL,
-    territory_id TEXT NOT NULL,
+    territory_id INT NOT NULL,
     PRIMARY KEY(employee_id, territory_id)
 );
 CREATE TABLE offices(
     id SERIAL,
-    office_id INT NOT NULL,
-    addres_line TEXT NOT NULL
+    territory_id INT NOT NULL UNIQUE,
+    addres_line TEXT NOT NULL,
+    PRIMARY KEY(id)
 );
 CREATE TABLE us_states(
     id SERIAL,
-    state_id INT,
-    name TEXT NOT NULL,
-    state_abbr CHARACTER(2)
+    name TEXT NOT NULL UNIQUE,
+   abbreviation CHARACTER(2) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
 );
 -- ---
 --- Add foreign key constraints
 ALTER TABLE orders
-ADD CONSTRAINT fk_orders_customers
-FOREIGN KEY (employee_id)
-REFERENCES employees(id);
+ADD CONSTRAINT fk_orders_employees
+FOREIGN KEY (employees_id)
+REFERENCES employees;
 
 ALTER TABLE orders
-ADD CONSTRAINT fk_order_employees
-FOREIGN KEY (employee_id)
-REFERENCES employees(id);
+ADD CONSTRAINT fk_order_customers
+FOREIGN KEY (customers_id)
+REFERENCES employees;
 
 
 
@@ -113,8 +115,38 @@ REFERENCES employees(id);
 
 ALTER TABLE products
 ADD CONSTRAINT fk_products_categories 
-FOREIGN KEY (category_idgit) 
+FOREIGN KEY (category_id) 
 REFERENCES categories (id);
 
+ALTER TABLE products
+ADD CONSTRAINT fk_products_categories 
+FOREIGN KEY (supplier_id) 
+REFERENCES supplier;
+
+ALTER TABLE orders_products
+ADD CONSTRAINT fk_orders_products_products
+FOREIGN KEY product_id
+REFERENCES products;
+
+ALTER TABLE orders_products
+ADD CONSTRAINT fk_orders_products_orders
+FOREIGN KEY order_id
+REFERENCES orders;
+
+
+ALTER TABLE employees_territories
+ADD CONSTRAINT fk_employees_territories_employees
+FOREIGN KEY employee_id
+REFERENCES employees;
+
+ALTER TABLE employees_territories
+ADD CONSTRAINT fk_employees_territories_territories
+FOREIGN KEY territory_id
+REFERENCES territories;
+
+ALTER TABLE offices
+ADD CONSTRAINT fk_offices_territory
+FOREIGN KEY territory_id
+REFERENCES territories
 
 -- TODO create more constraints here...

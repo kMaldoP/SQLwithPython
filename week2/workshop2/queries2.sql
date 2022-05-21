@@ -21,8 +21,8 @@ ORDER BY city DESC;
 -- Hint: only include products for which the discontinued column is true.
 SELECT product_id, product_name
 FROM products
-WHERE discontinued = true
-ORDER BY product_name;
+WHERE discontinued is true
+ORDER BY product_id;
 
 -- 1.4
 -- Select the first_name and last_name of employees who do not have anyone to report to
@@ -44,8 +44,8 @@ ORDER BY employee_id;
 -- getting the data you expect. Then add each of the restrictions one by one.
 SELECT product_name
 FROM products
-WHERE discontinued = false AND units_in_stock <= reorder_level;
-
+WHERE discontinued is false AND units_in_stock <= reorder_level AND units_on_order > 0
+ORDER BY product_id;
 
 -- Part 2: Functions, Grouping
 -- Here are some real queries you might be asked on a day-to-day basis.
@@ -53,7 +53,7 @@ WHERE discontinued = false AND units_in_stock <= reorder_level;
 
 -- 2.1
 -- How many orders have been made?
-SELECT COUNT * 
+SELECT COUNT (*) 
 FROM orders ;
 
 -- 2.2
@@ -95,12 +95,12 @@ ORDER BY customer_id;
 -- Then, select the average of those counts.
 --
 -- Hint: ship_via is a foreign key column in orders that references shippers.
-WITH temp_table AS 
+WITH shippers_per_customer AS 
 (SELECT customer_id, COUNT(DISTINCT ship_via)
 FROM orders
 GROUP BY customer_id)
 SELECT AVG(COUNT) 
-FROM temp_table;
+FROM shippers_per_customer;
 
 
 
@@ -116,7 +116,7 @@ FROM temp_table;
 SELECT pn.product_name AS product_name,
 c.category_name AS category_name
 FROM products pn
-INNER JOIN categories c
+JOIN categories c
 ON pn.category_id = c.category_id
 ORDER BY product_id
 -- 3.2
@@ -130,19 +130,12 @@ ORDER BY product_id
 -- Hint: joins can only take two tables at a time, but you use multiple joins in
 -- one query by listing each after the other.
 -- Try an inner join on employees -> employees_territories -> territories -> regions
-SELECT
-r.region_description AS region,
-t.territory AS territory,
-e.last_name AS last_name,
-e.first_name AS first_name
-FROM territories t 
-INNER JOIN employees_territories et 
-ON t.territory_id = et.territory_id
-INNER JOIN employees e 
-ON e.employee_id = et.employee_id 
-INNER JOIN region r 
-ON r.region_id = t.region_id
-ORDER BY r.region_description, t.territory_description, e.last_name, e.first_name
+SELECT DISTINCT r.region_description, t.territory_description, e.last_name, e.first_name
+FROM employees e
+JOIN employees_territories et ON e.employee_id = et.employee_id
+JOIN territories t ON t.territory_id = et.territory_id
+JOIN regions r ON r.region_id = t.region_id
+ORDER BY region_description, territory_description, last_name, first_name;
 -- 3.3
 -- Finance wants to audit the sales tax rates we've applied and needs a list of
 -- each customer in the different states.
